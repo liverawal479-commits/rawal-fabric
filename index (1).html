@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAWAL FABRIC | Fashion Store</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f6f6;color:#171717}
+header{position:sticky;top:0;z-index:20;background:#111;color:#fff;padding:14px 5%;box-shadow:0 2px 12px #0003}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font-size:23px;font-weight:900;letter-spacing:1px}
+.cart{border:0;border-radius:22px;padding:10px 15px;font-weight:700;cursor:pointer}
+.hero{padding:42px 6%;background:linear-gradient(115deg,#111,#3d3d3d);color:white;text-align:center}
+.hero h1{font-size:42px;margin:5px}.offer{display:inline-block;background:#e91e63;padding:9px 18px;border-radius:25px;font-weight:900;margin:12px 0}.hero p{font-size:17px}
+.controls{padding:18px 5%;background:#fff;display:flex;gap:9px;flex-wrap:wrap;justify-content:center;position:sticky;top:65px;z-index:10}
+input,select{padding:12px;border:1px solid #ccc;border-radius:10px;font-size:15px}.search{width:min(520px,100%)}button{cursor:pointer}
+.cat{border:0;background:#eee;border-radius:20px;padding:10px 14px}.cat.active{background:#111;color:#fff}
+.grid{width:92%;max-width:1250px;margin:22px auto 55px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:17px}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 3px 14px #00000012}.card img{width:100%;height:235px;object-fit:cover}.body{padding:13px}.badge{display:inline-block;background:#e91e63;color:#fff;padding:4px 7px;border-radius:5px;font-size:12px;font-weight:800}.price{font-size:20px;font-weight:900}.old{text-decoration:line-through;color:#888;font-size:13px;margin-left:5px}.add{width:100%;border:0;background:#111;color:#fff;padding:11px;border-radius:8px;margin-top:10px;font-weight:800}
+.modal{display:none;position:fixed;inset:0;background:#0009;z-index:50;padding:15px;overflow:auto}.box{background:#fff;max-width:650px;margin:25px auto;border-radius:16px;padding:20px}.close{float:right;font-size:28px;cursor:pointer}.row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #ddd;padding:12px 0}.qty button{padding:4px 9px}.total{font-size:21px;font-weight:900;margin:18px 0}.form input,.form textarea,.form select{width:100%;margin:6px 0 12px}.form textarea{min-height:90px}.order{width:100%;padding:14px;border:0;border-radius:9px;background:#159447;color:#fff;font-size:17px;font-weight:800}.empty{text-align:center;padding:35px}footer{background:#111;color:#fff;text-align:center;padding:28px}
+</style>
+</head>
+<body>
+
+<header><div class="nav">
+<div class="logo">RAWAL FABRIC</div>
+<button class="cart" onclick="openCart()">🛒 Cart (<span id="count">0</span>)</button>
+</div></header>
+
+<section class="hero">
+<h1>RAWAL FABRIC</h1>
+<div class="offer">🔥 FLAT 15% OFF 🔥</div>
+<p>Men • Women • Kids • Fashion • Footwear • Accessories</p>
+</section>
+
+<div class="controls">
+<input id="search" class="search" placeholder="🔎 कपड़े खोजें..." oninput="render()">
+<button class="cat active" onclick="category('All',this)">All</button>
+<button class="cat" onclick="category('Men',this)">Men</button>
+<button class="cat" onclick="category('Women',this)">Women</button>
+<button class="cat" onclick="category('Kids',this)">Kids</button>
+<button class="cat" onclick="category('Footwear',this)">Footwear</button>
+<button class="cat" onclick="category('Accessories',this)">Accessories</button>
+<select id="sizeFilter" onchange="render()"><option value="">All Sizes</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option><option>3XL</option><option>4XL</option><option>5XL</option><option>0-3M</option><option>3-6M</option><option>6-12M</option><option>1-2Y</option><option>2-3Y</option><option>3-4Y</option><option>4-5Y</option><option>5-6Y</option><option>6-7Y</option><option>7-8Y</option><option>8-10Y</option><option>10-12Y</option><option>12-14Y</option></select>
+</div>
+
+<section id="products" class="grid"></section>
+
+<footer><h2>RAWAL FABRIC</h2><p>Quality Fashion at Great Prices</p><p>📲 WhatsApp: 8890957249</p><p>© 2026 RAWAL FABRIC</p></footer>
+
+<div class="modal" id="cartModal"><div class="box">
+<span class="close" onclick="closeCart()">×</span><h2>🛒 Your Cart</h2>
+<div id="cartItems"></div><div class="total">Total: ₹<span id="total">0</span></div>
+<button class="order" onclick="checkout()">Proceed to Checkout</button>
+</div></div>
+
+<div class="modal" id="checkoutModal"><div class="box">
+<span class="close" onclick="closeCheckout()">×</span><h2>📦 Checkout</h2>
+<form class="form" onsubmit="placeOrder(event)">
+<label>Name</label><input id="name" required>
+<label>Mobile</label><input id="phone" type="tel" pattern="[0-9]{10}" required>
+<label>Address</label><textarea id="address" required></textarea>
+<label>City</label><input id="city" required>
+<label>State</label><input id="state" required>
+<label>PIN Code</label><input id="pin" type="tel" pattern="[0-9]{6}" required>
+<label>Payment</label><select id="payment"><option>Cash on Delivery</option><option>Online Payment</option></select>
+<button class="order" type="submit">📲 Order on WhatsApp</button>
+</form></div></div>
+
+<script>
+const WA="918890957249";
+const img=[
+"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=700&q=80",
+"https://images.unsplash.com/photo-1603252110481-7ba873bf42ab?auto=format&fit=crop&w=700&q=80",
+"https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=700&q=80",
+"https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=700&q=80",
+"https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=700&q=80",
+"https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=700&q=80"
+];
+const data=[
+["Men's T-Shirt","Men",499,"M,L,XL,XXL,3XL"],["Men's Shirt","Men",699,"S,M,L,XL,XXL"],["Men's Jeans","Men",999,"30,32,34,36,38,40"],["Men's Lower / Track Pant","Men",599,"S,M,L,XL,XXL,3XL"],["Men's Cargo","Men",799,"30,32,34,36,38"],["Men's Hoodie","Men",899,"M,L,XL,XXL"],["Men's Jacket","Men",1299,"M,L,XL,XXL"],["Men's Kurta","Men",799,"S,M,L,XL,XXL"],["Men's Blazer","Men",1499,"M,L,XL,XXL"],["Men's Nightwear","Men",499,"M,L,XL,XXL"],["Women's Top","Women",499,"S,M,L,XL,XXL"],["Women's T-Shirt","Women",449,"S,M,L,XL,XXL"],["Women's Jeans","Women",899,"28,30,32,34,36"],["Women's Dress","Women",999,"S,M,L,XL,XXL"],["Women's Kurti","Women",699,"S,M,L,XL,XXL"],["Women's Saree","Women",899,"Free Size"],["Women's Salwar Suit","Women",1199,"S,M,L,XL,XXL"],["Women's Lehenga","Women",1599,"S,M,L,XL,XXL"],["Women's Leggings","Women",399,"S,M,L,XL,XXL"],["Women's Lower / Palazzo","Women",599,"S,M,L,XL,XXL"],["Kids T-Shirt","Kids",299,"1-2Y,2-3Y,3-4Y,5-6Y,7-8Y"],["Kids Jeans","Kids",499,"3-4Y,5-6Y,7-8Y,8-10Y,10-12Y"],["Kids Dress","Kids",699,"2-3Y,3-4Y,5-6Y,7-8Y"],["Kids Frock","Kids",599,"1-2Y,2-3Y,3-4Y,5-6Y"],["Kids Lower","Kids",399,"3-4Y,5-6Y,7-8Y,8-10Y"],["Kids Hoodie","Kids",499,"3-4Y,5-6Y,7-8Y,8-10Y"],["Men's Sneakers","Footwear",999,"6,7,8,9,10"],["Women's Sandals","Footwear",699,"4,5,6,7,8"],["Kids Shoes","Footwear",499,"10,11,12,13,1,2"],["Fashion Cap","Accessories",199,"Free Size"],["Fashion Belt","Accessories",249,"Free Size"],["Wallet","Accessories",299,"Free Size"],["Fashion Bag","Accessories",599,"Free Size"]
+].map((x,i)=>({id:i+1,name:x[0],cat:x[1],price:x[2],sizes:x[3].split(","),image:img[i%img.length]}));
+
+let cart=JSON.parse(localStorage.getItem("rawalCart")||"[]"),cat="All";
+function category(c,b){cat=c;document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()}
+function render(){
+ const q=document.getElementById("search").value.toLowerCase(), sf=document.getElementById("sizeFilter").value;
+ const list=data.filter(p=>(cat==="All"||p.cat===cat)&&p.name.toLowerCase().includes(q)&&(!sf||p.sizes.includes(sf)));
+ document.getElementById("products").innerHTML=list.map(p=>`<article class="card"><img src="${p.image}"><div class="body"><span class="badge">15% OFF</span><h3>${p.name}</h3><div><span class="price">₹${Math.round(p.price*.85)}</span><span class="old">₹${p.price}</span></div><small>Sizes: ${p.sizes.join(", ")}</small><button class="add" onclick="add(${p.id})">Add to Cart</button></div></article>`).join("")||'<div class="empty">कोई product नहीं मिला।</div>';
+}
+function save(){localStorage.setItem("rawalCart",JSON.stringify(cart));document.getElementById("count").textContent=cart.reduce((a,x)=>a+x.qty,0)}
+function add(id){let p=data.find(x=>x.id===id),x=cart.find(x=>x.id===id);x?x.qty++:cart.push({id,qty:1});save();alert(p.name+" cart में add हो गया।")}
+function openCart(){renderCart();document.getElementById("cartModal").style.display="block"}
+function closeCart(){document.getElementById("cartModal").style.display="none"}
+function renderCart(){
+ if(!cart.length){document.getElementById("cartItems").innerHTML='<div class="empty">Cart खाली है।</div>';document.getElementById("total").textContent=0;return}
+ let total=0;
+ document.getElementById("cartItems").innerHTML=cart.map(x=>{let p=data.find(p=>p.id===x.id),v=Math.round(p.price*.85)*x.qty;total+=v;return `<div class="row"><div><b>${p.name}</b><br>₹${Math.round(p.price*.85)} × ${x.qty}</div><div class="qty"><button onclick="change(${x.id},-1)">−</button>${x.qty}<button onclick="change(${x.id},1)">+</button><button onclick="removeItem(${x.id})">🗑️</button></div></div>`}).join("");
+ document.getElementById("total").textContent=total;
+}
+function change(id,n){let x=cart.find(x=>x.id===id);x.qty+=n;if(x.qty<=0)cart=cart.filter(x=>x.id!==id);save();renderCart()}
+function removeItem(id){cart=cart.filter(x=>x.id!==id);save();renderCart()}
+function checkout(){if(!cart.length)return alert("Cart खाली है।");closeCart();document.getElementById("checkoutModal").style.display="block"}
+function closeCheckout(){document.getElementById("checkoutModal").style.display="none"}
+function placeOrder(e){
+ e.preventDefault();
+ let msg="*RAWAL FABRIC - NEW ORDER*%0A%0A";
+ msg+="Name: "+encodeURIComponent(name.value)+"%0A";
+ msg+="Mobile: "+encodeURIComponent(phone.value)+"%0A";
+ msg+="Address: "+encodeURIComponent(address.value)+", "+encodeURIComponent(city.value)+", "+encodeURIComponent(state.value)+" - "+pin.value+"%0A";
+ msg+="Payment: "+encodeURIComponent(payment.value)+"%0A%0A*Products:*%0A";
+ let total=0;
+ cart.forEach(x=>{let p=data.find(p=>p.id===x.id),pr=Math.round(p.price*.85),v=pr*x.qty;total+=v;msg+="• "+encodeURIComponent(p.name)+" × "+x.qty+" = ₹"+v+"%0A"});
+ msg+="%0A*Total: ₹"+total+"*";
+ window.open("https://wa.me/"+WA+"?text="+msg,"_blank");
+ cart=[];save();closeCheckout();alert("WhatsApp खुल रहा है। Order भेजने के लिए Send दबाएँ।");
+}
+render();save();
+</script>
+</body>
+</html>
